@@ -1,10 +1,39 @@
 // Importar el modelo de 'Usuario'
 import { Usuario } from "../models/user.js";
 
+// Importar lo necesario para subir archivos
+
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+
+// Subir archivo
+
+// Configuración del multer: creación del espacio de almacenamiento en el servidor
+
+export const storage = multer.diskStorage({
+  // Destination es una variable de multer para configurar el directorio de destino de la API
+
+  // Recuerde cerrar la ruta con el slash
+  destination: (req, file, cb) => {
+    cb(null, "./images/perfil_foto");
+  },
+
+  // Configuración del nombre del archivo a guardar en el disco duro de la API
+  filename: function (req, file, cb) {
+    cb(null, "user" + "-" + Date.now() + "_" + file.originalname);
+  },
+});
+
+export const upload = multer({ storage: storage });
+
 // Controlador para crear un nuevo usuario
 export const createUser = async (req, res) => {
   try {
     // Crear un nuevo usuario utilizando los datos del cuerpo de la solicitud
+
+    req.body.foto_perfil = req.file.path;
+
     const nuevoUsuario = await Usuario.create(req.body);
     // Devolver el nuevo usuario creado con el código de estado 201 (Creado)
     res.status(201).json(nuevoUsuario);
@@ -16,7 +45,7 @@ export const createUser = async (req, res) => {
       res.status(400).json({ message: validationErrors });
     } else {
       // Otro tipo de error
-      res.status(500).json({ message: [error] });
+      res.status(500).json({ message: [error.message] });
     }
   }
 };
@@ -78,7 +107,7 @@ export const updateUser = async (req, res) => {
       res.status(400).json({ message: validationErrors });
     } else {
       // Otro tipo de error
-      res.status(500).json({ message: [error] });
+      res.status(500).json({ message: [error.message] });
     }
   }
 };
@@ -106,7 +135,7 @@ export const deleteUser = async (req, res) => {
       res.status(400).json({ message: validationErrors });
     } else {
       // Otro tipo de error
-      res.status(500).json({ message: [error] });
+      res.status(500).json({ message: [error.message] });
     }
   }
 };

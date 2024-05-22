@@ -1,6 +1,5 @@
-// ARREGLAR LAS FECHAS
-
 import express from "express";
+import cors from "cors";
 import userRoute from "./routes/userroutes.js";
 import publicationRoute from "./routes/publicationroutes.js";
 import commentRoute from "./routes/commentroutes.js";
@@ -10,7 +9,7 @@ const app = express();
 
 // Middleware para parsear JSON en las solicitudes
 app.use(express.json());
-
+app.use(cors());
 // Rutas
 app.use("/usuarios", userRoute);
 app.use("/publicaciones", publicationRoute);

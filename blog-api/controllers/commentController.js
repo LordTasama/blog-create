@@ -5,12 +5,8 @@ import { Comentario } from "../models/comment.js";
 export const createComment = async (req, res) => {
   try {
     // Crear un nuevo comentario utilizando los datos del cuerpo de la solicitud
-    const fechaHoraActual = new Date();
 
-    // Convertir la fecha y hora actual a la zona horaria de Colombia (America/Bogota)
-    const opciones = { timeZone: "America/Bogota", hour12: false };
-    const fechaHoraColombia = fechaHoraActual.toLocaleString("en-CA", opciones);
-    req.body.fecha_publicacion = fechaHoraColombia;
+    req.body.fecha_publicacion = Date.now() - 18000000;
     const nuevoComentario = await Comentario.create(req.body);
     // Devolver el nuevo comentario creado con el código de estado 201 (Creado)
     res.status(201).json(nuevoComentario);
@@ -21,7 +17,7 @@ export const createComment = async (req, res) => {
       res.status(400).json({ message: validationErrors });
     } else {
       // Otro tipo de error
-      res.status(500).json({ message: [error] });
+      res.status(500).json({ message: [error.message] });
     }
   }
 };

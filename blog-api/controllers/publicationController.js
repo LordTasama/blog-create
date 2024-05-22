@@ -1,4 +1,3 @@
-import { TIME } from "sequelize";
 // Importar el modelo de 'Publicacion' y 'Usuario'
 import { Publicacion } from "../models/publication.js";
 
@@ -6,12 +5,8 @@ import { Publicacion } from "../models/publication.js";
 export const createPublication = async (req, res) => {
   try {
     // Crear una nueva publicación utilizando los datos del cuerpo de la solicitud
-    const fechaHoraActual = new Date();
 
-    // Convertir la fecha y hora actual a la zona horaria de Colombia (America/Bogota)
-    const opciones = { timeZone: "America/Bogota", hour12: false };
-    const fechaHoraColombia = fechaHoraActual.toLocaleString("en-CA", opciones);
-    req.body.fecha_creacion = fechaHoraColombia;
+    req.body.fecha_creacion = Date.now() - 18000000;
     const nuevaPublicacion = await Publicacion.create(req.body);
     // Devolver la nueva publicación creada con el código de estado 201 (Creado)
     res.status(201).json(nuevaPublicacion);
@@ -22,7 +17,7 @@ export const createPublication = async (req, res) => {
       res.status(400).json({ message: validationErrors });
     } else {
       // Otro tipo de error
-      res.status(500).json({ message: [error] });
+      res.status(500).json({ message: [error.message] });
     }
   }
 };
