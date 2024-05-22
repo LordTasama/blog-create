@@ -18,18 +18,18 @@ CREATE TABLE Usuario (
 
 CREATE TABLE Publicacion (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    titulo VARCHAR(255) NOT NULL,
-    contenido TEXT NOT NULL,
+    titulo VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(2500) NOT NULL,
     imagen VARCHAR(255),
-    fecha_creacion DATE NOT NULL,
+    fecha_creacion DATETIME NOT NULL,
     usuario_id BIGINT NOT NULL,
     CONSTRAINT FOREIGN KEY (usuario_id) REFERENCES Usuario(identificacion)
 );
 
 CREATE TABLE Comentario (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    contenido TEXT NOT NULL,
-    fecha_publicacion DATE NOT NULL,
+    contenido VARCHAR(2500) NOT NULL,
+    fecha_publicacion DATETIME NOT NULL,
     usuario_id BIGINT NOT NULL,
     publicacion_id BIGINT NOT NULL,
     CONSTRAINT FOREIGN KEY (usuario_id) REFERENCES Usuario(identificacion),

@@ -1,3 +1,4 @@
+import { TIME } from "sequelize";
 // Importar el modelo de 'Publicacion' y 'Usuario'
 import { Publicacion } from "../models/publication.js";
 
@@ -5,12 +6,24 @@ import { Publicacion } from "../models/publication.js";
 export const createPublication = async (req, res) => {
   try {
     // Crear una nueva publicación utilizando los datos del cuerpo de la solicitud
+    const fechaHoraActual = new Date();
+
+    // Convertir la fecha y hora actual a la zona horaria de Colombia (America/Bogota)
+    const opciones = { timeZone: "America/Bogota", hour12: false };
+    const fechaHoraColombia = fechaHoraActual.toLocaleString("en-CA", opciones);
+    req.body.fecha_creacion = fechaHoraColombia;
     const nuevaPublicacion = await Publicacion.create(req.body);
     // Devolver la nueva publicación creada con el código de estado 201 (Creado)
     res.status(201).json(nuevaPublicacion);
   } catch (error) {
-    // Si ocurre un error, devolver un mensaje de error con el código de estado 400 (Solicitud incorrecta)
-    res.status(400).json({ message: error.message });
+    if (error.name === "SequelizeValidationError") {
+      // Si es un error de validación de Sequelize
+      const validationErrors = error.errors.map((error) => error.message);
+      res.status(400).json({ message: validationErrors });
+    } else {
+      // Otro tipo de error
+      res.status(500).json({ message: [error] });
+    }
   }
 };
 
@@ -23,7 +36,7 @@ export const getPublications = async (req, res) => {
     res.status(200).json(publicaciones);
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: [error.message] });
   }
 };
 
@@ -38,11 +51,11 @@ export const getPublicationById = async (req, res) => {
       res.status(200).json(publicacion);
     } else {
       // Si no se encuentra la publicación, devolver un mensaje de publicación no encontrada con el código de estado 404 (No encontrado)
-      res.status(404).json({ message: "Publicación no encontrada" });
+      res.status(404).json({ message: ["Publicación no encontrada"] });
     }
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: [error.message] });
   }
 };
 
@@ -51,21 +64,23 @@ export const updatePublication = async (req, res) => {
   const { id } = req.params;
   try {
     // Actualizar la publicación con los datos proporcionados en el cuerpo de la solicitud
-    const [actualizado] = await Publicacion.update(req.body, {
-      where: { id },
-    });
-    // Si se actualiza al menos una publicación, devolver un mensaje de éxito con el código de estado 200 (OK)
-    if (actualizado) {
+    const publicacion = await Publicacion.findByPk(id);
+    if (publicacion) {
+      await Publicacion.update(req.body, {
+        where: { id: id },
+      });
+      // Si se actualiza al menos una publicación, devolver un mensaje de éxito con el código de estado 200 (OK)
+
       res
         .status(200)
-        .json({ message: "Publicación actualizada correctamente" });
+        .json({ message: ["Publicación actualizada correctamente"] });
     } else {
       // Si no se encuentra la publicación, devolver un mensaje de publicación no encontrada con el código de estado 404 (No encontrado)
-      res.status(404).json({ message: "Publicación no encontrada" });
+      res.status(404).json({ message: ["Publicación no encontrada"] });
     }
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: [error.message] });
   }
 };
 
@@ -79,13 +94,15 @@ export const deletePublication = async (req, res) => {
     });
     // Si se elimina al menos una publicación, devolver un mensaje de éxito con el código de estado 200 (OK)
     if (eliminado) {
-      res.status(200).json({ message: "Publicación eliminada correctamente" });
+      res
+        .status(200)
+        .json({ message: ["Publicación eliminada correctamente"] });
     } else {
       // Si no se encuentra la publicación, devolver un mensaje de publicación no encontrada con el código de estado 404 (No encontrado)
-      res.status(404).json({ message: "Publicación no encontrada" });
+      res.status(404).json({ message: ["Publicación no encontrada"] });
     }
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: [error.message] });
   }
 };

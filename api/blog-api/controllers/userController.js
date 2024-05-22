@@ -10,7 +10,14 @@ export const createUser = async (req, res) => {
     res.status(201).json(nuevoUsuario);
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 400 (Solicitud incorrecta)
-    res.status(400).json({ message: error.message });
+    if (error.name === "SequelizeValidationError") {
+      // Si es un error de validación de Sequelize
+      const validationErrors = error.errors.map((error) => error.message);
+      res.status(400).json({ message: validationErrors });
+    } else {
+      // Otro tipo de error
+      res.status(500).json({ message: [error] });
+    }
   }
 };
 
@@ -23,7 +30,7 @@ export const getUsers = async (req, res) => {
     res.status(200).json(usuarios);
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: [error.message] });
   }
 };
 
@@ -38,11 +45,11 @@ export const getUserById = async (req, res) => {
       res.status(200).json(usuario);
     } else {
       // Si no se encuentra el usuario, devolver un mensaje de usuario no encontrado con el código de estado 404 (No encontrado)
-      res.status(404).json({ message: "Usuario no encontrado" });
+      res.status(404).json({ message: ["Usuario no encontrado"] });
     }
   } catch (error) {
     // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: [error.message] });
   }
 };
 
@@ -51,19 +58,28 @@ export const updateUser = async (req, res) => {
   const { id } = req.params;
   try {
     // Actualizar el usuario con los datos proporcionados en el cuerpo de la solicitud
-    const [actualizado] = await Usuario.update(req.body, {
-      where: { id },
-    });
-    // Si se actualiza al menos un usuario, devolver un mensaje de éxito con el código de estado 200 (OK)
-    if (actualizado) {
+    const user = await Usuario.findByPk(id);
+
+    if (user) {
+      await Usuario.update(req.body, {
+        where: { identificacion: id },
+      });
+      // Si se actualiza al menos un usuario, devolver un mensaje de éxito con el código de estado 200 (OK)
       res.status(200).json({ message: "Usuario actualizado correctamente" });
     } else {
       // Si no se encuentra el usuario, devolver un mensaje de usuario no encontrado con el código de estado 404 (No encontrado)
       res.status(404).json({ message: "Usuario no encontrado" });
     }
   } catch (error) {
-    // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    // Si ocurre un error, devolver un mensaje de error con el código de estado 400 (Solicitud incorrecta)
+    if (error.name === "SequelizeValidationError") {
+      // Si es un error de validación de Sequelize
+      const validationErrors = error.errors.map((error) => error.message);
+      res.status(400).json({ message: validationErrors });
+    } else {
+      // Otro tipo de error
+      res.status(500).json({ message: [error] });
+    }
   }
 };
 
@@ -83,7 +99,14 @@ export const deleteUser = async (req, res) => {
       res.status(404).json({ message: "Usuario no encontrado" });
     }
   } catch (error) {
-    // Si ocurre un error, devolver un mensaje de error con el código de estado 500 (Error interno del servidor)
-    res.status(500).json({ message: error.message });
+    // Si ocurre un error, devolver un mensaje de error con el código de estado 400 (Solicitud incorrecta)
+    if (error.name === "SequelizeValidationError") {
+      // Si es un error de validación de Sequelize
+      const validationErrors = error.errors.map((error) => error.message);
+      res.status(400).json({ message: validationErrors });
+    } else {
+      // Otro tipo de error
+      res.status(500).json({ message: [error] });
+    }
   }
 };
