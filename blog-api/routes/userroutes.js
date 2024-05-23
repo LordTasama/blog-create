@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/", upload.single("foto_perfil"), createUser);
 router.get("/", getUsers);
 router.get("/:id", getUserById);
-router.put("/:id", updateUser);
+router.put("/:id", upload.single("foto_perfil"), updateUser);
 router.delete("/:id", deleteUser);
 
 export default router;

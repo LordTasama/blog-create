@@ -44,7 +44,6 @@ export const Usuario = sequelize.define(
     },
     correo: {
       type: DataTypes.STRING(255),
-      unique: true,
       allowNull: false,
       validate: {
         isEmail: {
@@ -112,5 +111,5 @@ export const Rol = sequelize.define(
     timestamps: false,
   }
 );
-Usuario.belongsTo(Rol, { foreignKey: "rol_id" });
-Rol.hasMany(Usuario, { foreignKey: "rol_id" });
+// Usuario.belongsTo(Rol, { foreignKey: "rol_id" });
+// Rol.hasMany(Usuario, { foreignKey: "rol_id" });
