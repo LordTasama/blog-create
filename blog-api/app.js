@@ -27,11 +27,12 @@ app.listen(PORT, () => {
     await sequelize
       .sync({ alter: true })
       .then(() =>
-        console.log(
-          "Modelos sincronizados y relaciones establecidas correctamente."
-        )
+        // console.log(
+        //   "Modelos sincronizados y relaciones establecidas correctamente."
+        // )
+        console.log("Modelos sincronizados correctamente.")
       )
-      .catch(() => {
+      .catch((err) => {
         console.log("Error al sincronizar los modelos y relaciones");
       });
 
