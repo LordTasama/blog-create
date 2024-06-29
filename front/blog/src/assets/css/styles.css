@@ -6,13 +6,13 @@
 }
 .carrousel-container {
   width: 100% !important;
-  height: 50vh !important;
+  height: 30vh !important;
   position: relative;
   overflow: hidden;
 }
 .img-slide {
   width: 100% !important;
-  height: 50vh !important;
+  height: 30vh !important;
   object-fit: cover;
 }
 .carousel-indicators {
@@ -24,8 +24,18 @@
   transition: 0.5s all ease-in-out;
 }
 .nav-link-custom:hover {
-  scale: 1.2;
+  scale: 1.1;
 }
 .focus-link-custom {
   border-bottom: 3px solid #000000 !important;
+}
+
+.foto-perfil {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+}
+
+.custom-dropdown-toggle::after {
+  display: none;
 }
