@@ -1,0 +1,23 @@
+import NavBar from "./components/navbar";
+import Home from "./components/home";
+import Publications from "./components/publications";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./assets/css/styles.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+function App() {
+  return (
+    <>
+      <Router>
+        <NavBar></NavBar>
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route path="/publications" element={<Publications />} />
+        </Routes>
+      </Router>
+    </>
+  );
+}
+
+export default App;
