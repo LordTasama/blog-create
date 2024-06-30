@@ -31,13 +31,16 @@ function NavBar() {
       e.classList.remove("focus-link-custom");
     });
     element.currentTarget.classList.toggle("focus-link-custom");
+    document.title = element.target.innerHTML;
   };
 
   useEffect(() => {
     let index = 0;
     let element = "";
+    let title = "Inicio";
     if (location.pathname == "/publications") {
       index = 1;
+      title = "Publicaciones";
     }
     document.querySelectorAll(".nav-link-custom").forEach((e, i) => {
       e.classList.remove("focus-link-custom");
@@ -45,6 +48,7 @@ function NavBar() {
     });
 
     element.classList.toggle("focus-link-custom");
+    document.title = title;
   }, []);
   const [logOutModal, setLogOutModal] = useState(false);
 
