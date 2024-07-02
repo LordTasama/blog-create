@@ -1,22 +1,28 @@
 // Importar los modelos de 'Comentario' y 'Usuario'
 import { Comentario } from "../models/comment.js";
+import { Usuario } from "../models/user.js";
 
 // Controlador para crear un nuevo comentario
 export const createComment = async (req, res) => {
   try {
     // Crear un nuevo comentario utilizando los datos del cuerpo de la solicitud
-
     req.body.fecha_publicacion = Date.now() - 18000000;
+    if (req.body.contenido.length == 0) {
+      // Si el contenido está vacío, devolver un error de validación
+      return res
+        .status(422)
+        .json({ message: "El contenido no puede estar vacío" });
+    }
     const nuevoComentario = await Comentario.create(req.body);
     // Devolver el nuevo comentario creado con el código de estado 201 (Creado)
     res.status(201).json(nuevoComentario);
   } catch (error) {
     if (error.name === "SequelizeValidationError") {
-      // Si es un error de validación de Sequelize
+      // Si es un error de validación de Sequelize, devolver un error 400 (Solicitud incorrecta)
       const validationErrors = error.errors.map((error) => error.message);
       res.status(400).json({ message: validationErrors });
     } else {
-      // Otro tipo de error
+      // Otro tipo de error, devolver un error 500 (Error interno del servidor)
       res.status(500).json({ message: [error.message] });
     }
   }
@@ -26,7 +32,14 @@ export const createComment = async (req, res) => {
 export const getComments = async (req, res) => {
   try {
     // Obtener todos los comentarios de la base de datos
-    const comentarios = await Comentario.findAll();
+    const comentarios = await Comentario.findAll({
+      include: [
+        {
+          model: Usuario,
+          attributes: ["nombre", "apellido", "foto_perfil"], // seleccionar solo los atributos que necesitas
+        },
+      ],
+    });
     // Devolver la lista de comentarios con el código de estado 200 (OK)
     res.status(200).json(comentarios);
   } catch (error) {

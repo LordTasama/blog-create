@@ -5,13 +5,13 @@ import {
   getCommentById,
   deleteComment,
 } from "../controllers/commentController.js";
-
+import { auth } from "../controllers/loginController.js";
 const router = express.Router();
 
 // Rutas CRUD para comentarios
-router.post("/", createComment);
-router.get("/", getComments);
-router.get("/:id", getCommentById);
-router.delete("/:id", deleteComment);
+router.post("/", auth, createComment);
+router.get("/", auth, getComments);
+router.get("/:id", auth, getCommentById);
+router.delete("/:id", auth, deleteComment);
 
 export default router;

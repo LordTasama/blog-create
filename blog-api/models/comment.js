@@ -42,8 +42,8 @@ export const Comentario = sequelize.define(
     timestamps: false,
   }
 );
-// Comentario.belongsTo(Usuario, { foreignKey: "usuario_id" });
-// Usuario.hasMany(Comentario, { foreignKey: "usuario_id" });
+Comentario.belongsTo(Usuario, { foreignKey: "usuario_id" });
+Usuario.hasMany(Comentario, { foreignKey: "usuario_id" });
 
-// Comentario.belongsTo(Publicacion, { foreignKey: "publicacion_id" });
-// Publicacion.hasMany(Comentario, { foreignKey: "publicacion_id" });
+Comentario.belongsTo(Publicacion, { foreignKey: "publicacion_id" });
+Publicacion.hasMany(Comentario, { foreignKey: "publicacion_id" });

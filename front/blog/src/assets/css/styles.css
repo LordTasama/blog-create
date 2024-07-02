@@ -4,7 +4,7 @@
   font-family: "Nunito", sans-serif;
 }
 body {
-  background-color: #fdf9ec;
+  background-color: #18191a;
 }
 .carrousel-container {
   width: 100% !important;
@@ -22,14 +22,14 @@ body {
 }
 .nav-link-custom {
   font-size: large;
-  color: #000000;
+  color: #ffffff !important;
   transition: 0.5s all ease-in-out;
 }
 .nav-link-custom:hover {
   scale: 1.1;
 }
 .focus-link-custom {
-  border-bottom: 3px solid #000000 !important;
+  border-bottom: 3px solid #ffffff !important;
 }
 
 .foto-perfil {
@@ -40,4 +40,37 @@ body {
 
 .custom-dropdown-toggle::after {
   display: none;
+}
+.placeholder-comment {
+  background-color: #242526 !important;
+}
+.placeholder-comment::placeholder {
+  color: #ffffff !important;
+}
+.placeholder-comment::placeholder:hover {
+  background-color: #242526 !important;
+}
+
+.label-modal::after {
+  background-color: transparent !important;
+}
+/* Estilos para pantallas medianas (md) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .card-publication {
+    width: 80%;
+  }
+}
+
+/* Estilos para pantallas grandes (lg) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .card-publication {
+    width: 60%;
+  }
+}
+
+/* Estilos para pantallas extra grandes (xl) */
+@media (min-width: 1200px) {
+  .card-publication {
+    width: 45%;
+  }
 }

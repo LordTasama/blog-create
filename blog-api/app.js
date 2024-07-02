@@ -1,4 +1,6 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import userRoute from "./routes/userroutes.js";
 import publicationRoute from "./routes/publicationroutes.js";
@@ -8,6 +10,16 @@ import { Rol } from "./models/user.js";
 const app = express();
 
 // Middleware para parsear JSON en las solicitudes
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(
+  "/images/publication_photo",
+  express.static(path.join(__dirname, "public/images/publication_photo"))
+);
+app.use(
+  "/images/perfil_photo",
+  express.static(path.join(__dirname, "public/images/perfil_photo"))
+);
 app.use(express.json());
 app.use(cors());
 // Rutas

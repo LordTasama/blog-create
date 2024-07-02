@@ -4,15 +4,10 @@ import { sequelize } from "../config/mysql.js";
 export const Usuario = sequelize.define(
   "Usuario",
   {
-    identificacion: {
+    id: {
       type: DataTypes.BIGINT,
-      autoIncrement: false,
+      autoIncrement: true,
       primaryKey: true,
-      validate: {
-        isNumeric: {
-          msg: "La identificación proporcionada no es válida",
-        },
-      },
     },
     nombre: {
       type: DataTypes.STRING(150),
@@ -44,6 +39,9 @@ export const Usuario = sequelize.define(
     },
     correo: {
       type: DataTypes.STRING(255),
+      unique: {
+        name: "correo_unique",
+      },
       allowNull: false,
       validate: {
         isEmail: {
@@ -111,5 +109,5 @@ export const Rol = sequelize.define(
     timestamps: false,
   }
 );
-// Usuario.belongsTo(Rol, { foreignKey: "rol_id" });
-// Rol.hasMany(Usuario, { foreignKey: "rol_id" });
+Usuario.belongsTo(Rol, { foreignKey: "rol_id" });
+Rol.hasMany(Usuario, { foreignKey: "rol_id" });

@@ -1,6 +1,8 @@
 // Importar el modelo de 'Publicacion' y 'Usuario'
 import { Publicacion } from "../models/publication.js";
 import borrarArchivo from "../config/globals.js";
+import { Usuario } from "../models/user.js";
+
 // Controlador para crear una nueva publicación
 export const createPublication = async (req, res) => {
   try {
@@ -10,7 +12,8 @@ export const createPublication = async (req, res) => {
         req.file.mimetype != "image/png" && req.file.mimetype != "image/jpeg";
 
       if (condition) {
-        res.status(400).send({
+        // Si el formato de la imagen no es correcto, devolver un error 400 (Solicitud incorrecta)
+        res.status(415).send({
           message: ["El formáto no es correcto debe ser(.png,jpg o jpeg)"],
         });
         borrarArchivo(req.file.filename, "publication_photo");
@@ -22,6 +25,14 @@ export const createPublication = async (req, res) => {
       req.body.imagen = "";
     }
     req.body.fecha_creacion = Date.now() - 18000000;
+    if (req.body.titulo.length == 0 || req.body.descripcion.length == 0) {
+      // Si el título o la descripción están vacíos, devolver un error 400 (Solicitud incorrecta)
+      res.status(422).send({
+        response: "Título y descripción no pueden estar vacíos",
+        estado: "anulado",
+      });
+      return;
+    }
     const nuevaPublicacion = await Publicacion.create(req.body);
     // Devolver la nueva publicación creada con el código de estado 201 (Creado)
     res.status(201).json(nuevaPublicacion);
@@ -30,11 +41,11 @@ export const createPublication = async (req, res) => {
       borrarArchivo(req.file.filename, "publication_photo");
     }
     if (error.name === "SequelizeValidationError") {
-      // Si es un error de validación de Sequelize
+      // Si es un error de validación de Sequelize, devolver un error 400 (Solicitud incorrecta)
       const validationErrors = error.errors.map((error) => error.message);
       res.status(400).json({ message: validationErrors });
     } else {
-      // Otro tipo de error
+      // Otro tipo de error, devolver un error 500 (Error interno del servidor)
       res.status(500).json({ message: [error.message] });
     }
   }
@@ -44,7 +55,14 @@ export const createPublication = async (req, res) => {
 export const getPublications = async (req, res) => {
   try {
     // Obtener todas las publicaciones de la base de datos
-    const publicaciones = await Publicacion.findAll();
+    const publicaciones = await Publicacion.findAll({
+      include: [
+        {
+          model: Usuario,
+          attributes: ["nombre", "apellido", "foto_perfil"], // seleccionar solo los atributos que necesitas
+        },
+      ],
+    });
     // Devolver la lista de publicaciones con el código de estado 200 (OK)
     res.status(200).json(publicaciones);
   } catch (error) {
@@ -89,7 +107,8 @@ export const updatePublication = async (req, res) => {
           req.file.mimetype != "image/png" && req.file.mimetype != "image/jpeg";
 
         if (condition) {
-          res.status(400).send({
+          // Si el formato de la imagen no es correcto, devolver un error 400 (Solicitud incorrecta)
+          res.status(415).send({
             message: ["El formáto no es correcto debe ser(.png,jpg o jpeg)"],
           });
           borrarArchivo(req.file.filename, "publication_photo");
@@ -103,7 +122,6 @@ export const updatePublication = async (req, res) => {
         where: { id: id },
       });
       // Si se actualiza al menos una publicación, devolver un mensaje de éxito con el código de estado 200 (OK)
-
       res
         .status(200)
         .json({ message: ["Publicación actualizada correctamente"] });

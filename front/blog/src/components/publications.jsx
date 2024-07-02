@@ -3,7 +3,6 @@ import {
   Form,
   Button,
   Modal,
-  FloatingLabel,
   Image,
   Container,
   Card,
@@ -26,8 +25,12 @@ import Swal from "sweetalert2/dist/sweetalert2.all.js";
 // React
 import { useState, useEffect } from "react";
 
+// PENDIENTE ....
+import userId from "../App";
+
 const Publications = () => {
   const [Publications, setPublications] = useState([]);
+  const [Comments, setComments] = useState([]);
   const [addPublication, setAddPublication] = useState(false);
   const [FormAddPublication, setFormAddPublication] = useState({
     titulo: "",
@@ -35,7 +38,6 @@ const Publications = () => {
     imagen: "",
     usuario_id: 1114149123,
   });
-
   const handleAddPublication = async () => {
     const data = new FormData();
     data.append("titulo", FormAddPublication.titulo);
@@ -47,6 +49,9 @@ const Publications = () => {
       const response = await fetch("http://localhost:3000/publicaciones", {
         method: "POST",
         body: data,
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
       });
 
       if (response.ok) {
@@ -60,6 +65,13 @@ const Publications = () => {
           });
           setAddPublication(false);
           getPublications();
+        } else {
+          Swal.fire({
+            title: "Algo falló...",
+            text: result.response,
+            icon: "info",
+            timer: 2000,
+          });
         }
       } else {
         console.error("Error:", response.statusText);
@@ -88,7 +100,11 @@ const Publications = () => {
 
   const getPublications = async () => {
     try {
-      const response = await fetch("http://localhost:3000/publicaciones");
+      const response = await fetch("http://localhost:3000/publicaciones", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      });
 
       if (response.ok) {
         const result = await response.json();
@@ -101,97 +117,234 @@ const Publications = () => {
       console.error("Error al enviar el formulario:", error);
     }
   };
+  const getComments = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/comentarios", {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+
+        setComments(result);
+      } else {
+        console.error("Error:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+    }
+  };
   const handleCommentDisplay = (event) => {
-    event.currentTarget.parentElement.parentElement.children[1].children[0].classList.toggle(
+    event.currentTarget.parentElement.parentElement.children[1].classList.toggle(
       "d-none"
     );
   };
-  const handleComment = (id) => {
-    console.log(id);
+  const handleComment = async (id, event) => {
+    const text = event.currentTarget.parentElement.children[0];
+    if (text.value.length == 0) {
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:3000/comentarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          contenido: text.value,
+          fecha_publicacion: "",
+          usuario_id: 1114149123,
+          publicacion_id: id,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.id) {
+          getComments();
+          text.value = "";
+        }
+      } else {
+        console.error("Error:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+    }
   };
   useEffect(() => {
     getPublications();
+    getComments();
   }, []);
   return (
     <>
-      {Publications.map((e, index) => (
-        <Container key={index}>
-          <Row
-            className="mt-4 mx-5"
-            style={{
-              borderLeft: "2px solid black",
-              borderRight: "2px solid black",
-            }}
-          >
-            <Col
-              xxl="12"
-              xl="12"
-              lg="12"
-              md="12"
-              sm="12"
-              className="d-flex justify-content-center mb-3"
-            >
-              <Card style={{ width: "50%" }}>
-                <Card.Body>
-                  <Card.Title>{e.titulo}</Card.Title>
-                  <Card.Text>{e.descripcion}</Card.Text>
-                  <Card.Img
-                    variant="top"
-                    src={
-                      "http://localhost:3000/images/publication_photo/" +
-                      e.imagen
-                    }
-                  />
-                </Card.Body>
-                <Card.Footer className="d-flex justify-content-center">
-                  <Row>
-                    <Col
-                      xxl="12"
-                      xl="12"
-                      lg="12"
-                      md="12"
-                      sm="12"
-                      className="d-flex justify-content-center mb-3"
-                    >
-                      <Button
-                        className="bg-secondary"
-                        style={{ borderRadius: "30%", border: "none" }}
-                        title="Comentar"
-                        onClick={(event) => {
-                          handleCommentDisplay(event);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faComment} />
-                      </Button>
-                    </Col>
-                    <Col
-                      xxl="12"
-                      xl="12"
-                      lg="12"
-                      md="12"
-                      sm="12"
-                      className="d-flex justify-content-center mb-3"
-                    >
-                      <InputGroup className="d-none">
-                        <Form.Control type="text" placeholder="Comentario" />
-                        <Button
-                          variant="secondary"
-                          title="Enviar"
-                          onClick={() => {
-                            handleComment(e.id);
+      {Publications.length > 0 ? (
+        <>
+          {Publications.map((e, index) => (
+            <Container key={index}>
+              <Row>
+                <Col
+                  xxl="12"
+                  xl="12"
+                  lg="12"
+                  md="12"
+                  sm="12"
+                  className="d-flex justify-content-center mb-3"
+                >
+                  <Card
+                    className="card-publication"
+                    style={{ backgroundColor: "#242526" }}
+                  >
+                    <Card.Header>
+                      <div>
+                        <Image
+                          src={
+                            "http://localhost:3000/images/perfil_photo/" +
+                            e.Usuario.foto_perfil
+                          }
+                          fluid
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
                           }}
+                        />
+                        <small className="h6 ms-1 text-light">
+                          {e.Usuario.nombre} {e.Usuario.apellido}
+                        </small>
+                      </div>
+                    </Card.Header>
+                    <Card.Body className="text-light">
+                      <Card.Title>{e.titulo}</Card.Title>
+                      <Card.Text>{e.descripcion}</Card.Text>
+                      {e.imagen != "" ? (
+                        <Card.Img
+                          variant="top"
+                          src={
+                            "http://localhost:3000/images/publication_photo/" +
+                            e.imagen
+                          }
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </Card.Body>
+                    <Card.Footer>
+                      <Row>
+                        <Col
+                          xxl="12"
+                          xl="12"
+                          lg="12"
+                          md="12"
+                          sm="12"
+                          className="d-flex justify-content-center mb-3"
                         >
-                          <FontAwesomeIcon icon={faPaperPlane} />
-                        </Button>
-                      </InputGroup>
-                    </Col>
-                  </Row>
-                </Card.Footer>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      ))}
+                          <Button
+                            className="bg-secondary"
+                            style={{ borderRadius: "30%", border: "none" }}
+                            title="Comentar"
+                            onClick={(event) => {
+                              handleCommentDisplay(event);
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faComment} />
+                          </Button>
+                        </Col>
+                        <Container className="d-none">
+                          <Col
+                            xxl="12"
+                            xl="12"
+                            lg="12"
+                            md="12"
+                            sm="12"
+                            className="d-flex justify-content-center mb-3"
+                          >
+                            <InputGroup>
+                              <Form.Control
+                                className="text-light placeholder-comment"
+                                as="textarea"
+                                placeholder="Comentario"
+                              />
+                              <Button
+                                variant="secondary"
+                                title="Enviar"
+                                onClick={(event) => {
+                                  handleComment(e.id, event);
+                                }}
+                              >
+                                <FontAwesomeIcon icon={faPaperPlane} />
+                              </Button>
+                            </InputGroup>
+                          </Col>
+                          <div
+                            className="pt-4 pb-3  rounded"
+                            style={{ backgroundColor: "#18191a" }}
+                          >
+                            {Comments.filter((e2) => e.id === e2.publicacion_id)
+                              .length > 0 ? (
+                              Comments.filter(
+                                (e2) => e.id === e2.publicacion_id
+                              ).map((e2, index2) => (
+                                <Col
+                                  key={index2}
+                                  xxl="12"
+                                  xl="12"
+                                  lg="12"
+                                  md="12"
+                                  sm="12"
+                                  className="mb-3 mx-auto rounded p-2"
+                                  style={{
+                                    width: "90%",
+                                    backgroundColor: "#242526",
+                                  }}
+                                >
+                                  <Image
+                                    src={
+                                      "http://localhost:3000/images/perfil_photo/" +
+                                      e2.Usuario.foto_perfil
+                                    }
+                                    fluid
+                                    style={{
+                                      width: "30px",
+                                      height: "30px",
+                                      borderRadius: "50%",
+                                    }}
+                                  />
+                                  <small
+                                    className="ms-1 text-light"
+                                    style={{
+                                      fontSize: "15px",
+                                      fontWeight: "600",
+                                    }}
+                                  >
+                                    {e2.Usuario.nombre} {e2.Usuario.apellido}
+                                  </small>
+                                  <br />
+                                  <small className="mt-1 text-light">
+                                    {e2.contenido}
+                                  </small>
+                                </Col>
+                              ))
+                            ) : (
+                              <p className="h6 text-light text-center">
+                                No hay comentarios para esta publicación
+                              </p>
+                            )}
+                          </div>
+                        </Container>
+                      </Row>
+                    </Card.Footer>
+                  </Card>
+                </Col>
+              </Row>
+            </Container>
+          ))}
+        </>
+      ) : (
+        <h1 className="text-center">No hay ninguna publicación actualmente</h1>
+      )}
       <Button
         variant="secondary"
         style={{ position: "fixed", right: "2%", bottom: "7%" }}
@@ -201,36 +354,38 @@ const Publications = () => {
         <FontAwesomeIcon icon={faPlus} size="lg" className="bg-transparent" />
       </Button>
       {/* Modals */}
-      <Modal show={addPublication}>
-        <Modal.Header>
+      <Modal show={addPublication} className="text-light">
+        <Modal.Header style={{ backgroundColor: "#242526" }}>
           <Modal.Title>Crear publicación</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ backgroundColor: "#242526" }}>
           <Form>
-            <FloatingLabel
-              controlId="titleAddPublication"
-              label="Título"
-              className="mb-3"
-            >
+            <Form.Floating className="mb-3">
               <Form.Control
+                id="titleAddPublication"
                 type="text"
-                placeholder="Agrega un título"
+                placeholder=""
+                title="Agrega un título"
                 defaultValue={FormAddPublication.titulo}
                 onChange={(event) => handleChangeAdd("title", event)}
+                className="placeholder-comment text-light"
               />
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="descriptionAddPublication"
-              label="Descripción"
-              className="mb-3"
-            >
+              <Form.Label className="text-light label-modal">Título</Form.Label>
+            </Form.Floating>
+            <Form.Floating className="mb-3">
               <Form.Control
+                id="descriptionAddPublication"
                 as="textarea"
-                placeholder="Agrega una descripción"
+                placeholder=""
+                title="Agrega una descripción"
                 defaultValue={FormAddPublication.descripcion}
                 onChange={(event) => handleChangeAdd("description", event)}
+                className="placeholder-comment text-light"
               />
-            </FloatingLabel>
+              <Form.Label className="text-light label-modal">
+                Descripción
+              </Form.Label>
+            </Form.Floating>
             <>
               <Form.Control
                 id="fileAddPublication"
@@ -253,7 +408,7 @@ const Publications = () => {
             <Image src={imageUploadedAdd} fluid />
           </Container>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer style={{ backgroundColor: "#242526" }}>
           <Button variant="secondary" onClick={() => setAddPublication(false)}>
             Cancelar
           </Button>
@@ -265,4 +420,5 @@ const Publications = () => {
     </>
   );
 };
+
 export default Publications;

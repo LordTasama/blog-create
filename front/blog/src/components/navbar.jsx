@@ -160,13 +160,13 @@ function NavBar() {
       </Container>
       {/* Modals */}
       <Modal show={logOutModal}>
-        <Modal.Header>
+        <Modal.Header className="placeholder-comment text-light">
           <Modal.Title>Cerrar sesión</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="placeholder-comment text-light">
           Esta acción cerrará la sesión actual, deberás iniciar una nueva sesión
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="placeholder-comment text-light">
           <Button variant="secondary" onClick={() => setLogOutModal(false)}>
             Cancelar
           </Button>
