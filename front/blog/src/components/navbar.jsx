@@ -1,6 +1,7 @@
 // React
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserIdContext } from "./userIdContext";
 
 // Bootstrap
 import {
@@ -24,7 +25,11 @@ import defaultImg from "../assets/media/default-avatar-icon-of-social-media-user
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
+// ARREGLAR USECONTEXT FUNCIÓN ASÍNCRONICA
+
 function NavBar() {
+  const usuarioInfo = useContext(UserIdContext);
+
   const location = useLocation();
   const changePage = (element) => {
     document.querySelectorAll(".nav-link-custom").forEach((e) => {
@@ -114,7 +119,10 @@ function NavBar() {
               className="custom-dropdown-toggle"
             >
               <Image
-                src={defaultImg}
+                src={
+                  "http://localhost:3000/images/perfil_photo/" +
+                  usuarioInfo.userId.foto_perfil
+                }
                 roundedCircle
                 alt="Imagen de perfil"
                 className="foto-perfil"
@@ -125,7 +133,7 @@ function NavBar() {
                 style={{ backgroundColor: "transparent" }}
                 className="text-center"
               >
-                Anderson Tasama
+                {usuarioInfo.userId.nombre} {usuarioInfo.userId.apellido}
               </Dropdown.ItemText>
               <Dropdown.Divider />
               <Dropdown.Item eventKey="1" className="d-flex align-items-center">

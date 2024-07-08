@@ -23,12 +23,13 @@ import {
 // SweetAlert
 import Swal from "sweetalert2/dist/sweetalert2.all.js";
 // React
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
-// PENDIENTE ....
-import userId from "../App";
+import { UserIdContext } from "./userIdContext";
 
 const Publications = () => {
+  const usuarioInfo = useContext(UserIdContext);
+
   const [Publications, setPublications] = useState([]);
   const [Comments, setComments] = useState([]);
   const [addPublication, setAddPublication] = useState(false);
@@ -156,7 +157,7 @@ const Publications = () => {
         body: JSON.stringify({
           contenido: text.value,
           fecha_publicacion: "",
-          usuario_id: 1114149123,
+          usuario_id: userId,
           publicacion_id: id,
         }),
       });
@@ -345,14 +346,18 @@ const Publications = () => {
       ) : (
         <h1 className="text-center">No hay ninguna publicación actualmente</h1>
       )}
-      <Button
-        variant="secondary"
-        style={{ position: "fixed", right: "2%", bottom: "7%" }}
-        title="Crear publicación"
-        onClick={() => setAddPublication(true)}
-      >
-        <FontAwesomeIcon icon={faPlus} size="lg" className="bg-transparent" />
-      </Button>
+      {/* SOLUCIONAR */}
+      {usuarioInfo.rol_id == 1 ? (
+        <Button
+          variant="secondary"
+          style={{ position: "fixed", right: "2%", bottom: "7%" }}
+          title="Crear publicación"
+          onClick={() => setAddPublication(true)}
+        >
+          <FontAwesomeIcon icon={faPlus} size="lg" className="bg-transparent" />
+        </Button>
+      ) : null}
+
       {/* Modals */}
       <Modal show={addPublication} className="text-light">
         <Modal.Header style={{ backgroundColor: "#242526" }}>

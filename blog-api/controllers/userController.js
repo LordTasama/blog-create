@@ -11,6 +11,7 @@ import multer from "multer";
 import borrarArchivo from "../config/globals.js";
 
 import jwt from "jsonwebtoken";
+import { sequelize } from "../config/mysql.js";
 
 // Configuración de multer para subir archivos
 export const storage = multer.diskStorage({
@@ -181,7 +182,11 @@ export const userId = async (req, res) => {
     // Verificamos el token de autenticación
     const decoded = jwt.verify(token, "blog-tasama-2671333");
     const userId = decoded.userId;
-    return res.status(200).json({ userId });
+    const usuario = await Usuario.findByPk(userId);
+
+    delete usuario.dataValues.password;
+
+    return res.status(200).json(usuario);
   } catch (error) {
     // Si el token es inválido, devolvemos un mensaje de error con código 401 (Unauthorized)
     return res.status(401).json({ message: "Token no válido", error });

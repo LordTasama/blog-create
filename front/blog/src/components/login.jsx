@@ -69,7 +69,6 @@ function Login() {
     const loginForm = document.getElementById("loginForm");
     const emailInput = loginForm.elements["loginEmail"];
     const passwordInput = loginForm.elements["loginPassword"];
-    const check = loginForm.elements["loginRemember"];
 
     if (!emailInput.checkValidity()) {
       setErrorMessage("Ingrese un correo electrónico válido");
@@ -118,7 +117,6 @@ function Login() {
     const lastnameInput = registerForm2.elements["registerLastname"];
     const emailInput = registerForm2.elements["registerEmail"];
     const passwordInput = registerForm2.elements["registerPassword"];
-    const registerPerfilPhoto = registerForm2.elements["registerPerfilPhoto"];
     const conditionsCheck = registerForm2.elements["registerConditions"];
 
     if (!nameInput.checkValidity()) {
@@ -375,7 +373,6 @@ function Login() {
                   size="lg"
                   className="d-none"
                   accept="image/*"
-                  value={registerForm.foto}
                   onChange={(event) => {
                     setRegisterForm({
                       ...registerForm,

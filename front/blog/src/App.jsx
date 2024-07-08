@@ -13,10 +13,10 @@ import "./assets/css/styles.css";
 // React
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { UserIdProvider } from "./components/userIdContext";
 
 function App() {
   const [userLogin, setUserLogin] = useState(false);
-  console.log(userId());
   useEffect(() => {
     const token = Object.keys(localStorage);
     if (!token.includes("token")) {
@@ -41,13 +41,15 @@ function App() {
 
   return userLogin ? (
     <>
-      <Router>
-        <NavBar></NavBar>
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route path="/publications" element={<Publications />} />
-        </Routes>
-      </Router>
+      <UserIdProvider>
+        <Router>
+          <NavBar></NavBar>
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route path="/publications" element={<Publications />} />
+          </Routes>
+        </Router>
+      </UserIdProvider>
     </>
   ) : (
     <>
@@ -55,24 +57,5 @@ function App() {
     </>
   );
 }
-export const userId = async () => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    try {
-      const response = await fetch("http://localhost:3000/usuarios/userId", {
-        headers: {
-          Authorization: token,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return data.userId;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error("Error al obtener el id del usuario", error);
-    }
-  }
-};
+
 export default App;
