@@ -6,7 +6,7 @@ CREATE TABLE Rol (
 INSERT INTO Rol (id, nombre) VALUES (1, 'Propietario'),(2, 'Usuario');
 
 CREATE TABLE Usuario (
-    identificacion BIGINT PRIMARY KEY NOT NULL,
+    id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(150) NOT NULL,
     apellido VARCHAR(150) NOT NULL,
     foto_perfil VARCHAR(255),
@@ -23,7 +23,7 @@ CREATE TABLE Publicacion (
     imagen VARCHAR(255),
     fecha_creacion DATETIME NOT NULL,
     usuario_id BIGINT NOT NULL,
-    CONSTRAINT FOREIGN KEY (usuario_id) REFERENCES Usuario(identificacion)
+    CONSTRAINT FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
 );
 
 CREATE TABLE Comentario (
@@ -32,6 +32,6 @@ CREATE TABLE Comentario (
     fecha_publicacion DATETIME NOT NULL,
     usuario_id BIGINT NOT NULL,
     publicacion_id BIGINT NOT NULL,
-    CONSTRAINT FOREIGN KEY (usuario_id) REFERENCES Usuario(identificacion),
+    CONSTRAINT FOREIGN KEY (usuario_id) REFERENCES Usuario(id),
     CONSTRAINT FOREIGN KEY (publicacion_id) REFERENCES Publicacion(id)
 );

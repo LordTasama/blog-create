@@ -11,7 +11,6 @@ import multer from "multer";
 import borrarArchivo from "../config/globals.js";
 
 import jwt from "jsonwebtoken";
-import { sequelize } from "../config/mysql.js";
 
 // Configuración de multer para subir archivos
 export const storage = multer.diskStorage({

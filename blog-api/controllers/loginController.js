@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { Usuario } from "../models/user.js";
+import borrarArchivo from "../config/globals.js";
 import jwt from "jsonwebtoken";
 
 // Función para manejar el login de un usuario
