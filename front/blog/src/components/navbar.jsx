@@ -56,7 +56,10 @@ function NavBar() {
     document.title = title;
   }, []);
   const [logOutModal, setLogOutModal] = useState(false);
-
+  const logOut = () => {
+    localStorage.clear();
+    window.location = "/";
+  };
   return (
     <>
       <Container fluid>
@@ -178,7 +181,7 @@ function NavBar() {
           <Button variant="secondary" onClick={() => setLogOutModal(false)}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={() => setLogOutModal(false)}>
+          <Button variant="primary" onClick={() => logOut()}>
             Aceptar
           </Button>
         </Modal.Footer>

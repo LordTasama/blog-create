@@ -9,23 +9,23 @@ import {
   Row,
   Col,
   InputGroup,
-} from 'react-bootstrap';
+} from "react-bootstrap";
 // FontAwesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
   faImages,
   faLeaf,
   faComment,
   faPaperPlane,
-} from '@fortawesome/free-solid-svg-icons';
+} from "@fortawesome/free-solid-svg-icons";
 
 // SweetAlert
-import Swal from 'sweetalert2/dist/sweetalert2.all.js';
+import Swal from "sweetalert2/dist/sweetalert2.all.js";
 // React
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from "react";
 
-import { UserIdContext } from './userIdContext';
+import { UserIdContext } from "./userIdContext";
 
 const Publications = () => {
   const usuarioInfo = useContext(UserIdContext);
@@ -34,24 +34,24 @@ const Publications = () => {
   const [Comments, setComments] = useState([]);
   const [addPublication, setAddPublication] = useState(false);
   const [FormAddPublication, setFormAddPublication] = useState({
-    titulo: '',
-    descripcion: '',
-    imagen: '',
+    titulo: "",
+    descripcion: "",
+    imagen: "",
     usuario_id: 1114149123,
   });
   const handleAddPublication = async () => {
     const data = new FormData();
-    data.append('titulo', FormAddPublication.titulo);
-    data.append('descripcion', FormAddPublication.descripcion);
-    data.append('imagen', FormAddPublication.imagen);
-    data.append('usuario_id', FormAddPublication.usuario_id);
+    data.append("titulo", FormAddPublication.titulo);
+    data.append("descripcion", FormAddPublication.descripcion);
+    data.append("imagen", FormAddPublication.imagen);
+    data.append("usuario_id", FormAddPublication.usuario_id);
 
     try {
-      const response = await fetch('http://localhost:3000/publicaciones', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/publicaciones", {
+        method: "POST",
         body: data,
         headers: {
-          Authorization: localStorage.getItem('token'),
+          Authorization: localStorage.getItem("token"),
         },
       });
 
@@ -59,35 +59,35 @@ const Publications = () => {
         const result = await response.json();
         if (result.id) {
           Swal.fire({
-            title: 'Publicación creada',
-            text: 'Has hecho exitosamente una publicación',
-            icon: 'success',
+            title: "Publicación creada",
+            text: "Has hecho exitosamente una publicación",
+            icon: "success",
             timer: 2000,
           });
           setAddPublication(false);
           getPublications();
         } else {
           Swal.fire({
-            title: 'Algo falló...',
+            title: "Algo falló...",
             text: result.response,
-            icon: 'info',
+            icon: "info",
             timer: 2000,
           });
         }
       } else {
-        console.error('Error:', response.statusText);
+        console.error("Error:", response.statusText);
       }
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+      console.error("Error al enviar el formulario:", error);
     }
   };
   const handleChangeAdd = (inputToChange, event) => {
-    inputToChange == 'title'
+    inputToChange == "title"
       ? (FormAddPublication.titulo = event.target.value)
       : (FormAddPublication.descripcion = event.target.value);
   };
-  const [imageUploadedAdd, setImageUploadedAdd] = useState('');
-  const handleFileChangeAdd = event => {
+  const [imageUploadedAdd, setImageUploadedAdd] = useState("");
+  const handleFileChangeAdd = (event) => {
     const file = event.target.files[0];
     if (file) {
       FormAddPublication.imagen = file;
@@ -101,9 +101,9 @@ const Publications = () => {
 
   const getPublications = async () => {
     try {
-      const response = await fetch('http://localhost:3000/publicaciones', {
+      const response = await fetch("http://localhost:3000/publicaciones", {
         headers: {
-          Authorization: localStorage.getItem('token'),
+          Authorization: localStorage.getItem("token"),
         },
       });
 
@@ -112,17 +112,17 @@ const Publications = () => {
 
         setPublications(result);
       } else {
-        console.error('Error:', response.statusText);
+        console.error("Error:", response.statusText);
       }
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+      console.error("Error al enviar el formulario:", error);
     }
   };
   const getComments = async () => {
     try {
-      const response = await fetch('http://localhost:3000/comentarios', {
+      const response = await fetch("http://localhost:3000/comentarios", {
         headers: {
-          Authorization: localStorage.getItem('token'),
+          Authorization: localStorage.getItem("token"),
         },
       });
 
@@ -131,15 +131,15 @@ const Publications = () => {
 
         setComments(result);
       } else {
-        console.error('Error:', response.statusText);
+        console.error("Error:", response.statusText);
       }
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+      console.error("Error al enviar el formulario:", error);
     }
   };
-  const handleCommentDisplay = event => {
+  const handleCommentDisplay = (event) => {
     event.currentTarget.parentElement.parentElement.children[1].classList.toggle(
-      'd-none',
+      "d-none"
     );
   };
   const handleComment = async (id, event) => {
@@ -148,15 +148,15 @@ const Publications = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/comentarios', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/comentarios", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token'),
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
         },
         body: JSON.stringify({
           contenido: text.value,
-          fecha_publicacion: '',
+          fecha_publicacion: "",
           usuario_id: 1114149123,
           publicacion_id: id,
         }),
@@ -166,13 +166,13 @@ const Publications = () => {
         const result = await response.json();
         if (result.id) {
           getComments();
-          text.value = '';
+          text.value = "";
         }
       } else {
-        console.error('Error:', response.statusText);
+        console.error("Error:", response.statusText);
       }
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+      console.error("Error al enviar el formulario:", error);
     }
   };
   useEffect(() => {
@@ -196,20 +196,20 @@ const Publications = () => {
                 >
                   <Card
                     className="card-publication"
-                    style={{ backgroundColor: '#242526' }}
+                    style={{ backgroundColor: "#242526" }}
                   >
                     <Card.Header>
                       <div>
                         <Image
                           src={
-                            'http://localhost:3000/images/perfil_photo/' +
+                            "http://localhost:3000/images/perfil_photo/" +
                             e.Usuario.foto_perfil
                           }
                           fluid
                           style={{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
                           }}
                         />
                         <small className="h6 ms-1 text-light">
@@ -220,16 +220,16 @@ const Publications = () => {
                     <Card.Body className="text-light">
                       <Card.Title>{e.titulo}</Card.Title>
                       <Card.Text>{e.descripcion}</Card.Text>
-                      {e.imagen != '' ? (
+                      {e.imagen != "" ? (
                         <Card.Img
                           variant="top"
                           src={
-                            'http://localhost:3000/images/publication_photo/' +
+                            "http://localhost:3000/images/publication_photo/" +
                             e.imagen
                           }
                         />
                       ) : (
-                        ''
+                        ""
                       )}
                     </Card.Body>
                     <Card.Footer>
@@ -244,9 +244,9 @@ const Publications = () => {
                         >
                           <Button
                             className="bg-secondary"
-                            style={{ borderRadius: '30%', border: 'none' }}
+                            style={{ borderRadius: "30%", border: "none" }}
                             title="Comentar"
-                            onClick={event => {
+                            onClick={(event) => {
                               handleCommentDisplay(event);
                             }}
                           >
@@ -271,7 +271,7 @@ const Publications = () => {
                               <Button
                                 variant="secondary"
                                 title="Enviar"
-                                onClick={event => {
+                                onClick={(event) => {
                                   handleComment(e.id, event);
                                 }}
                               >
@@ -281,12 +281,12 @@ const Publications = () => {
                           </Col>
                           <div
                             className="pt-4 pb-3  rounded"
-                            style={{ backgroundColor: '#18191a' }}
+                            style={{ backgroundColor: "#18191a" }}
                           >
-                            {Comments.filter(e2 => e.id === e2.publicacion_id)
+                            {Comments.filter((e2) => e.id === e2.publicacion_id)
                               .length > 0 ? (
                               Comments.filter(
-                                e2 => e.id === e2.publicacion_id,
+                                (e2) => e.id === e2.publicacion_id
                               ).map((e2, index2) => (
                                 <Col
                                   key={index2}
@@ -297,27 +297,27 @@ const Publications = () => {
                                   sm="12"
                                   className="mb-3 mx-auto rounded p-2"
                                   style={{
-                                    width: '90%',
-                                    backgroundColor: '#242526',
+                                    width: "90%",
+                                    backgroundColor: "#242526",
                                   }}
                                 >
                                   <Image
                                     src={
-                                      'http://localhost:3000/images/perfil_photo/' +
+                                      "http://localhost:3000/images/perfil_photo/" +
                                       e2.Usuario.foto_perfil
                                     }
                                     fluid
                                     style={{
-                                      width: '30px',
-                                      height: '30px',
-                                      borderRadius: '50%',
+                                      width: "30px",
+                                      height: "30px",
+                                      borderRadius: "50%",
                                     }}
                                   />
                                   <small
                                     className="ms-1 text-light"
                                     style={{
-                                      fontSize: '15px',
-                                      fontWeight: '600',
+                                      fontSize: "15px",
+                                      fontWeight: "600",
                                     }}
                                   >
                                     {e2.Usuario.nombre} {e2.Usuario.apellido}
@@ -348,23 +348,23 @@ const Publications = () => {
           No hay ninguna publicación actualmente
         </h1>
       )}
-      {/* SOLUCIONAR */}
-      {/* {usuarioInfo.rol_id == 1 ? ( */}
-      <Button
-        variant="secondary"
-        style={{ position: 'fixed', right: '2%', bottom: '7%' }}
-        title="Crear publicación"
-        onClick={() => setAddPublication(true)}
-      >
-        <FontAwesomeIcon icon={faPlus} size="lg" className="bg-transparent" />
-      </Button>
-      {/* // ) : null} */}
+
+      {usuarioInfo.rol_id == 1 ? (
+        <Button
+          variant="secondary"
+          style={{ position: "fixed", right: "2%", bottom: "7%" }}
+          title="Crear publicación"
+          onClick={() => setAddPublication(true)}
+        >
+          <FontAwesomeIcon icon={faPlus} size="lg" className="bg-transparent" />
+        </Button>
+      ) : null}
       {/* Modals */}
       <Modal show={addPublication} className="text-light">
-        <Modal.Header style={{ backgroundColor: '#242526' }}>
+        <Modal.Header style={{ backgroundColor: "#242526" }}>
           <Modal.Title>Crear publicación</Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ backgroundColor: '#242526' }}>
+        <Modal.Body style={{ backgroundColor: "#242526" }}>
           <Form>
             <Form.Floating className="mb-3">
               <Form.Control
@@ -373,7 +373,7 @@ const Publications = () => {
                 placeholder=""
                 title="Agrega un título"
                 defaultValue={FormAddPublication.titulo}
-                onChange={event => handleChangeAdd('title', event)}
+                onChange={(event) => handleChangeAdd("title", event)}
                 className="placeholder-comment text-light"
               />
               <Form.Label className="text-light label-modal">Título</Form.Label>
@@ -385,7 +385,7 @@ const Publications = () => {
                 placeholder=""
                 title="Agrega una descripción"
                 defaultValue={FormAddPublication.descripcion}
-                onChange={event => handleChangeAdd('description', event)}
+                onChange={(event) => handleChangeAdd("description", event)}
                 className="placeholder-comment text-light"
               />
               <Form.Label className="text-light label-modal">
@@ -414,7 +414,7 @@ const Publications = () => {
             <Image src={imageUploadedAdd} fluid />
           </Container>
         </Modal.Body>
-        <Modal.Footer style={{ backgroundColor: '#242526' }}>
+        <Modal.Footer style={{ backgroundColor: "#242526" }}>
           <Button variant="secondary" onClick={() => setAddPublication(false)}>
             Cancelar
           </Button>
